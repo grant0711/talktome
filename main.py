@@ -27,19 +27,23 @@ async def ping():
     return {"message": "Server is up and running"}
 
 
-@app.post("/incoming_message")
+@app.post("/webhook")
 async def incoming_message(body):
     logger.debug(f'Incoming message: {body}')
     return "Incoming message"
 
 
-@app.get("/verify_webhook")
+@app.get("/webhook")
 async def verify_webhook(request: Request):
+    """
+    Used by whatsapp api to validate webhook endpoint for the app
+
+    Documentation: https://developers.facebook.com/docs/graph-api/webhooks/getting-started
+    """
     logger.debug(f"Incoming webhook verification request, {request}")
     if request.query_params['hub.verify_token'] == "testtoken123":
         return int(request.query_params['hub.challenge'])
-    else:
-        return "Token invalid"
+
 
 
 @app.get("/privacy_policy")
