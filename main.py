@@ -31,10 +31,14 @@ async def incoming_message(body):
     logger.debug(f'Incoming message: {body}')
     return "Incoming message"
 
-@app.get("/webhook")
-async def webhook():
-    logger.debug("Incoming webhook request")
-    return "testtoken123"
+@app.get("/verify_webhook")
+async def verify_webhook(mode, challenge, verify_token):
+    logger.debug("Incoming webhook verification request")
+    if verify_token == "testtoken123":
+        return challenge
+    else:
+        return "Token invalid"
+
 
 @app.get("/privacy_policy")
 async def privacy_policy():
