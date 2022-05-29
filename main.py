@@ -37,7 +37,7 @@ async def incoming_message(body):
 async def verify_webhook(request: Request):
     logger.debug(f"Incoming webhook verification request, {request}")
     if request.query_params['hub.verify_token'] == "testtoken123":
-        return request.query_params['hub.challenge']
+        return int(request.query_params['hub.challenge'])
     else:
         return "Token invalid"
 
