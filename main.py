@@ -31,6 +31,11 @@ async def incoming_message(body):
     logger.debug(f'Incoming message: {body}')
     return "Incoming message"
 
+@app.get("/webhook")
+async def webhook():
+    logger.debug("Incoming webhook request")
+    return "testtoken123"
+
 @app.get("/privacy_policy")
 async def privacy_policy():
     logger.debug('Privacy policy page accessed')
