@@ -6,7 +6,7 @@ import logging
 from logging.config import dictConfig
 from urllib.parse import quote
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from dotenv import load_dotenv
 
 from log_config import log_config
@@ -33,13 +33,12 @@ async def incoming_message(body):
     return "Incoming message"
 
 @app.get("/verify_webhook")
-async def verify_webhook(q):
-    logger.debug(f"Incoming webhook verification request, {q}")
-    #if verify_token == "testtoken123":
-    #    return challenge
-    #else:
-    #    return "Token invalid"
-    return "Nope"
+async def verify_webhook(request: Request):
+    logger.debug(f"Incoming webhook verification request, {request}")
+    if request.hub.verify_token == "testtoken123":
+        return request.hub.challenge
+    else:
+        return "Token invalid"
 
 
 @app.get("/privacy_policy")
