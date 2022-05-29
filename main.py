@@ -29,7 +29,7 @@ async def ping():
 @app.post("/incoming_message")
 async def incoming_message(body):
     logger.debug(f'Incoming message: {body}')
-
+    return "Incoming message"
 
 @app.get("/privacy_policy")
 async def privacy_policy():
