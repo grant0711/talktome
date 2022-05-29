@@ -28,7 +28,8 @@ async def ping():
 
 
 @app.post("/webhook")
-async def incoming_message(body):
+async def incoming_message(request: Request):
+    body = await request.json()
     logger.debug(f'Incoming message: {body}')
     return "Incoming message"
 
@@ -40,7 +41,7 @@ async def verify_webhook(request: Request):
 
     Documentation: https://developers.facebook.com/docs/graph-api/webhooks/getting-started
     """
-    logger.debug(f"Incoming webhook verification request, {request}")
+    logger.debug(f"Incoming webhook verification request")
     if request.query_params['hub.verify_token'] == "testtoken123":
         return int(request.query_params['hub.challenge'])
 
