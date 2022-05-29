@@ -32,11 +32,12 @@ async def incoming_message(body):
     logger.debug(f'Incoming message: {body}')
     return "Incoming message"
 
+
 @app.get("/verify_webhook")
 async def verify_webhook(request: Request):
     logger.debug(f"Incoming webhook verification request, {request}")
-    if request.hub.verify_token == "testtoken123":
-        return request.hub.challenge
+    if request.query_params['hub.verify_token'] == "testtoken123":
+        return request.query_params['hub.challenge']
     else:
         return "Token invalid"
 
