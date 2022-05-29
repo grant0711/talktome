@@ -4,6 +4,7 @@
 """
 import logging
 from logging.config import dictConfig
+from urllib.parse import quote
 
 from fastapi import FastAPI
 from dotenv import load_dotenv
@@ -32,12 +33,13 @@ async def incoming_message(body):
     return "Incoming message"
 
 @app.get("/verify_webhook")
-async def verify_webhook(mode, challenge, verify_token):
-    logger.debug("Incoming webhook verification request")
-    if verify_token == "testtoken123":
-        return challenge
-    else:
-        return "Token invalid"
+async def verify_webhook(q):
+    logger.debug(f"Incoming webhook verification request, {q}")
+    #if verify_token == "testtoken123":
+    #    return challenge
+    #else:
+    #    return "Token invalid"
+    return "Nope"
 
 
 @app.get("/privacy_policy")
