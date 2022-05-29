@@ -29,6 +29,7 @@ async def ping():
 
 @app.post("/webhook")
 async def incoming_message(request: Request):
+    logger.debug(request.query_params)
     body = await request.json()
     logger.debug(f'Incoming message: {body}')
     return "Incoming message"
