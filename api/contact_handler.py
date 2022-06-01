@@ -2,7 +2,7 @@
 
 
 """
-from lib import async_postgres
+from talktome.lib import async_postgres
 
 
 def get_contact_detailed_info(logger, wa_id):
