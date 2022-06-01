@@ -1,6 +1,7 @@
 import os
 
 from hashlib import sha1
+import hmac
 
 
 def authenticate_webhook_request(logger, x_hub_signature, payload):
@@ -8,11 +9,12 @@ def authenticate_webhook_request(logger, x_hub_signature, payload):
 
     
     """
-    sha1_string = sha1((payload + os.environ['WEBHOOK_SECRET']).encode()).hexdigest()
-    print(sha1_string)
+
+    test_signature = hmac.digest(os.environ['WEBHOOK_SECRET'].encode(), payload, 'sha1').decode('utf-8')
+    print(test_signature)
     print(x_hub_signature)
 
-    if sha1_string != x_hub_signature:
+    if test_signature != x_hub_signature:
         logger.debug(f'UNAUTHORIZED incoming request: {payload}')
         return False
 

@@ -50,7 +50,7 @@ async def incoming_message(request: Request):
     logger.debug(headers)
 
     payload = await request.body()
-    if not authenticate_webhook_request(logger, headers.get('x-hub-signature', ''), payload.decode('utf-8')):
+    if not authenticate_webhook_request(logger, headers.get('x-hub-signature', ''), payload):
         return {"message": "Webhook request not authorized"}
 
 
