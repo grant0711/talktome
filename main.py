@@ -9,10 +9,11 @@ from fastapi import FastAPI, Request
 from dotenv import load_dotenv
 
 from config.log_config import log_config
-from api.contact_handler import (
-    get_or_create_contact
-)
 from api.auth import authenticate_webhook_request
+from api.contact_handler import get_or_create_contact
+from api.event_handler import insert_incoming_event
+
+
 
 dictConfig(log_config)
 logger = logging.getLogger('development')
@@ -50,27 +51,24 @@ async def incoming_message(request: Request):
     #    return {"message": "Webhook request not authorized"}
 
     body = await request.json()
+    logger.debug(f'Incoming message: {body}')
+
+    changes = body['entry'][0]['changes'][0]['value']
+
+    contact = changes['contacts'][0]
+    message_info = changes['messages'][0]
 
     # Check if we have received from this contact before
     # Add to contacts if we haven't received from this contact
-    message_info = body['entry'][0]['changes'][0]['value']
-
-    contact = message_info['contacts'][0]
-    message = message_info['messages'][0]
-
-    logger.debug(contact)
-    logger.debug(message)
-
     contact_info = get_or_create_contact(logger, contact['wa_id'])
 
-    logger.debug(contact_info)
-
     # Write this event to the events table
+    message_id = insert_incoming_event(logger, message_info, contact_info)
 
     # Handle the event
 
-    logger.debug(f'Incoming message: {body}')
-    return "Incoming message"
+    
+    return {"message": f"message_id {message_id} received successfully"}
 
 
 @app.get("/webhook")
