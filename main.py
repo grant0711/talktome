@@ -53,15 +53,15 @@ async def incoming_message(request: Request):
 
     # Check if we have received from this contact before
     # Add to contacts if we haven't received from this contact
-    changes = body['entry'][0]['changes'][0]
+    message_info = body['entry'][0]['changes'][0]['value']
 
-    contact_profile = changes['value']['contacts'][0]['profile']
-    message = changes['value']['messages'][0]
+    contact = message_info['contacts'][0]
+    message = message_info['messages'][0]
 
-    logger.debug(contact_profile)
+    logger.debug(contact)
     logger.debug(message)
 
-    contact_info = get_or_create_contact(logger, contact_profile['wa_id'])
+    contact_info = get_or_create_contact(logger, contact['wa_id'])
 
     logger.debug(contact_info)
 
@@ -110,7 +110,8 @@ changes = {
         'contacts': [
             {'profile': {
                 'name': 'Grant'
-            }, 'wa_id': '221784269198'
+            },
+            'wa_id': '221784269198'
         }],
         
         'messages': [
