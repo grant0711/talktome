@@ -31,7 +31,7 @@ def connect(database):
         password = os.getenv(f'{database}_pass'),
         host = os.getenv(f'{database}_host'),
         port = os.getenv(f'{database}_port'),
-        ssl_mode='require'
+        sslmode='require'
     )
 
 
