@@ -54,11 +54,12 @@ async def incoming_message(request: Request):
     # Check if we have received from this contact before
     # Add to contacts if we haven't received from this contact
     changes = body['entry'][0]['changes'][0]
-    contact = changes['contacts'][0]
-    message = changes['messages'][0]
+    logger.debug(changes)
+    #contact = changes['contacts'][0]
+    #message = changes['messages'][0]
 
-    logger.debug(contact)
-    logger.debug(message)
+    #logger.debug(contact)
+    #logger.debug(message)
 
     contact_info = get_or_create_contact(logger, '221784269198')
 
