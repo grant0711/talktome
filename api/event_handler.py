@@ -10,10 +10,10 @@ def insert_incoming_event(logger, message_info, contact_info):
     logger.debug(f"CONTACT INFO : {contact_info}")
 
     # Transform our dicts into strings for JSONB insert or set as None
-    text = "'"+json.dumps(message_info.get("text"))+"'" if message_info.get("text") else None
-    image = "'"+json.dumps(message_info.get("image"))+"'" if message_info.get("image") else None
-    audio = "'"+json.dumps(message_info.get("audio"))+"'" if message_info.get("audio") else None
-    document = "'"+json.dumps(message_info.get("document"))+"'" if message_info.get("document") else None
+    text = "'"+json.dumps(message_info.get("text"))+"'" if message_info.get("text") else "'NULL'"
+    image = "'"+json.dumps(message_info.get("image"))+"'" if message_info.get("image") else "'NULL'"
+    audio = "'"+json.dumps(message_info.get("audio"))+"'" if message_info.get("audio") else "'NULL'"
+    document = "'"+json.dumps(message_info.get("document"))+"'" if message_info.get("document") else "'NULL'"
 
     sql = f"""
         INSERT INTO whatsapp.events (message_id, timestamp, type, text, image, audio, document, direction, automated, contact_id)
