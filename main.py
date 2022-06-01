@@ -55,7 +55,7 @@ async def incoming_message(request: Request):
 
 
     body = await request.json()
-    logger(type(body))
+    logger.debug(type(body))
 
     # Check if we have received from this contact before
     # Add to contacts if we haven't received from this contact
