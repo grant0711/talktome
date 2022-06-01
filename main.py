@@ -39,26 +39,27 @@ async def incoming_message(request: Request):
         - Starlette Request class object: https://www.starlette.io/requests/
 
     NOTE:
-        - It doesn't appear that there is a built-in security method on the whatsapp api, no token
-          is included on incoming requests, so we don't currently have a way to ensure that the incoming
-          requests are actually coming from Whatsapp
+        - Authentication is not currently deployed
         - When using the Starlette Request object directly in FastAPI, the automatic swagger documentation
           does not function as intended, considering the security risks of an unprotected endpoint
           this is actually the desirable behavior for the moment
     """
-    #headers = request.headers
-    #logger.debug(headers)
-
+    # FIXME we authenticate the incoming webhook request to ensure it's coming from whatsapp
     #payload = await request.body()
     #if not authenticate_webhook_request(logger, headers.get('x-hub-signature', ''), payload):
     #    return {"message": "Webhook request not authorized"}
 
-
     body = await request.json()
-    logger.debug(type(body))
 
     # Check if we have received from this contact before
     # Add to contacts if we haven't received from this contact
+    changes = body['entry'][0]['changes'][0]
+    contact = changes['contacts'][0]
+    message = changes['messages'][0]
+
+    logger.debug(contact)
+    logger.debug(message)
+
     contact_info = get_or_create_contact(logger, '221784269198')
 
     # Write this event to the events table
