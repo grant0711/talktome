@@ -8,7 +8,7 @@ def authenticate_webhook_request(logger, x_hub_signature, payload):
 
     
     """
-    sha1_string = sha1((payload + os.environ['WEBHOOK_SECRETE']).encode()).hexdigest()
+    sha1_string = sha1((payload + os.environ['WEBHOOK_SECRET']).encode()).hexdigest()
     print(sha1_string)
     print(x_hub_signature)
 
