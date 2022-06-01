@@ -1,11 +1,18 @@
-CREATE SCHEMA IF NOT EXISTS examplecompany;
+/*
+Events are simply inbound or outbound whatsapp messages or media
 
-DROP TABLE IF EXISTS examplecompany.events;
+We record every event sent or received here, linking it to a specific contact or agent
+*/
+CREATE SCHEMA IF NOT EXISTS whatsapp;
 
-CREATE TABLE examplecompany.events (
+DROP TABLE IF EXISTS whatsapp.events;
+
+DROP TYPE IF EXISTS direction;
+CREATE TYPE direction AS ENUM ('inbound', 'outbound');
+
+CREATE TABLE whatsapp.events (
+    -- These fields are from the whatsapp message
     message_id VARCHAR(255) PRIMARY KEY,
-    contact_id VARCHAR(20) NOT NULL,
-
     timestamp VARCHAR(20) NOT NULL,
     type VARCHAR(20) NOT NULL,
     text JSONB,
@@ -13,8 +20,16 @@ CREATE TABLE examplecompany.events (
     audio JSONB,
     document JSONB,
 
-    direction VARCHAR(8) NOT NULL,
+    -- These are synthetic fields we create
+    direction direction NOT NULL,
+    automated BOOLEAN NOT NULL, -- Set to TRUE for events sent by robot, FALSE for events sent by humans
     time_created TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
+
+    -- Links to agents and contacts
+    contact_id VARCHAR(20) NOT NULL,
+    agent_id VARCHAR(20), -- myAgro agent ID, optional only for human-sent outbound events
+    
      
-    CONSTRAINT fk_contact FOREIGN KEY (contact_id) REFERENCES examplecompany.contacts(wa_id)
+    CONSTRAINT fk_contact FOREIGN KEY (contact_id) REFERENCES whatsapp.contacts(wa_id),
+    CONSTRAINT fk_agent FOREIGN KEY (agent_id) REFERENCES whatsapp.agents(id)
 );

@@ -4,12 +4,14 @@
 """
 import logging
 from logging.config import dictConfig
-from urllib.parse import quote
 
 from fastapi import FastAPI, Request
 from dotenv import load_dotenv
 
-from log_config import log_config
+from config.log_config import log_config
+from api.contact_handler import (
+    get_or_create_contact
+)
 
 dictConfig(log_config)
 logger = logging.getLogger('development')
@@ -29,8 +31,33 @@ async def ping():
 
 @app.post("/webhook")
 async def incoming_message(request: Request):
-    logger.debug(request.query_params)
+    """
+    Endpoint to receive all inbound events from whatsapp api
+
+    Inputs:
+        - Starlette Request class object: https://www.starlette.io/requests/
+
+    NOTE:
+        - It doesn't appear that there is a built-in security method on the whatsapp api, no token
+          is included on incoming requests, so we don't currently have a way to ensure that the incoming
+          requests are actually coming from Whatsapp
+        - When using the Starlette Request object directly in FastAPI, the automatic swagger documentation
+          does not function as intended, considering the security risks of an unprotected endpoint
+          this is actually the desirable behavior for the moment
+    """
+    headers = await request.headers
+    logger.debug(headers)
+
     body = await request.json()
+
+    # Check if we have received from this contact before
+    # Add to contacts if we haven't received from this contact
+    contact_info = get_or_create_contact(logger, '221784269198')
+
+    # Write this event to the events table
+
+    # Handle the event
+
     logger.debug(f'Incoming message: {body}')
     return "Incoming message"
 
@@ -50,6 +77,12 @@ async def verify_webhook(request: Request):
 
 @app.get("/privacy_policy")
 async def privacy_policy():
+    """
+    This is required on setup of the whatsapp api
+
+    It isn't clear what specifically is required to display as a privacy policy, but simply
+    establishing this endpoint and returning simple text seemed to satisfy the requirement
+    """
     logger.debug('Privacy policy page accessed')
     return "FIXME This is a privacy policy. We won't sell your data to 3rd parties."
     
