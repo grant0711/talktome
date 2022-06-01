@@ -61,7 +61,11 @@ def execute(logger, database, sql, commit=False):
             if commit:
                 connection.commit()
 
-            return results
+            dict_result = []
+            for row in results:
+                dict_result.append(dict(row))
+
+            return dict_result
         except psycopg2.Error as e:
             logger.debug(f'ERROR while executing postgres.execute: {e}')
         finally:
