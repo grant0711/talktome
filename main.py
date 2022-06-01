@@ -12,6 +12,7 @@ from config.log_config import log_config
 from api.contact_handler import (
     get_or_create_contact
 )
+from api.auth import authenticate_webhook_request
 
 dictConfig(log_config)
 logger = logging.getLogger('development')
@@ -47,6 +48,11 @@ async def incoming_message(request: Request):
     """
     headers = request.headers
     logger.debug(headers)
+
+    payload = await request.body()
+    if not authenticate_webhook_request(logger, headers.get('x-hub-signature', ''), payload.decode('utf-8')):
+        return {"message": "Webhook request not authorized"}
+
 
     body = await request.json()
 
