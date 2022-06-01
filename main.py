@@ -54,14 +54,16 @@ async def incoming_message(request: Request):
     # Check if we have received from this contact before
     # Add to contacts if we haven't received from this contact
     changes = body['entry'][0]['changes'][0]
-    logger.debug(changes)
-    #contact = changes['contacts'][0]
-    #message = changes['messages'][0]
 
-    #logger.debug(contact)
-    #logger.debug(message)
+    contact_profile = changes['value']['contacts'][0]['profile']
+    message = changes['value']['messages'][0]
 
-    contact_info = get_or_create_contact(logger, '221784269198')
+    logger.debug(contact_profile)
+    logger.debug(message)
+
+    contact_info = get_or_create_contact(logger, contact_profile['wa_id'])
+
+    logger.debug(contact_info)
 
     # Write this event to the events table
 
@@ -95,3 +97,29 @@ async def privacy_policy():
     logger.debug('Privacy policy page accessed')
     return "FIXME This is a privacy policy. We won't sell your data to 3rd parties."
     
+
+
+
+
+changes = {
+    'value': {
+        'messaging_product': 'whatsapp',
+        'metadata': {
+            'display_phone_number': '15550901162', 'phone_number_id': '109551705096305'
+        },
+        'contacts': [
+            {'profile': {
+                'name': 'Grant'
+            }, 'wa_id': '221784269198'
+        }],
+        
+        'messages': [
+            {
+                'from': '221784269198',
+                'id': 'wamid.HBgMMjIxNzg0MjY5MTk4FQIAEhggMDE2OEU4REMyRjBBODNDQ0ZDNkFGRkYwRUMxMUM3NUUA',
+                'timestamp': '1654089912',
+                'text': {
+                    'body': 'Test17'
+                }, 'type': 'text'
+            }]
+    }, 'field': 'messages'}
