@@ -46,15 +46,16 @@ async def incoming_message(request: Request):
           does not function as intended, considering the security risks of an unprotected endpoint
           this is actually the desirable behavior for the moment
     """
-    headers = request.headers
-    logger.debug(headers)
+    #headers = request.headers
+    #logger.debug(headers)
 
-    payload = await request.body()
-    if not authenticate_webhook_request(logger, headers.get('x-hub-signature', ''), payload):
-        return {"message": "Webhook request not authorized"}
+    #payload = await request.body()
+    #if not authenticate_webhook_request(logger, headers.get('x-hub-signature', ''), payload):
+    #    return {"message": "Webhook request not authorized"}
 
 
     body = await request.json()
+    logger(type(body))
 
     # Check if we have received from this contact before
     # Add to contacts if we haven't received from this contact
