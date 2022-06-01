@@ -45,7 +45,7 @@ async def incoming_message(request: Request):
           does not function as intended, considering the security risks of an unprotected endpoint
           this is actually the desirable behavior for the moment
     """
-    headers = await request.headers
+    headers = request.headers
     logger.debug(headers)
 
     body = await request.json()
