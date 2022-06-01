@@ -1,4 +1,5 @@
 from psycopg2.extensions import JSON
+import simplejson
 from . import async_postgres
 
 def insert_incoming_event(logger, message_info, contact_info):
@@ -23,10 +24,10 @@ def insert_incoming_event(logger, message_info, contact_info):
                 '{message_info["id"]}',
                 '{message_info["timestamp"]}',
                 '{message_info["type"]}',
-                {JSON(message_info.get("text", {}))},
-                {JSON(message_info.get("image", {}))},
-                {JSON(message_info.get("audio", {}))},
-                {JSON(message_info.get("document", {}))},
+                {JSON(message_info.get("text", {}), dumps=simplejson.dumps)},
+                {JSON(message_info.get("image", {}), dumps=simplejson.dumps)},
+                {JSON(message_info.get("audio", {}), dumps=simplejson.dumps)},
+                {JSON(message_info.get("document", {}), dumps=simplejson.dumps)},
                 'inbound',
                 FALSE,
                 '{contact_info["wa_id"]}'
