@@ -5,7 +5,11 @@
 import logging
 from logging.config import dictConfig
 
-from fastapi import FastAPI, Request
+from fastapi import (
+    FastAPI,
+    Request,
+    HTTPException
+)
 from dotenv import load_dotenv
 
 from config.log_config import log_config
@@ -13,22 +17,13 @@ from api.auth import authenticate_webhook_request
 from api.contact_handler import get_or_create_contact
 from api.event_handler import insert_incoming_event
 
-
-
 dictConfig(log_config)
 logger = logging.getLogger('development')
 
-
 load_dotenv()
-
 
 app = FastAPI()
 
-
-@app.get("/ping")
-async def ping():
-    logger.debug(f'Ping request: Logs are operational; log level {logger.level}')
-    return {"message": "Server is up and running"}
 
 
 @app.post("/webhook")
@@ -46,9 +41,11 @@ async def incoming_message(request: Request):
           this is actually the desirable behavior for the moment
     """
     # FIXME we authenticate the incoming webhook request to ensure it's coming from whatsapp
-    #payload = await request.body()
-    #if not authenticate_webhook_request(logger, headers.get('x-hub-signature', ''), payload):
-    #    return {"message": "Webhook request not authorized"}
+    payload = await request.body()
+    headers = request.headers
+    if not authenticate_webhook_request(logger, headers.get('x-hub-signature', ''), payload):
+        #return HTTPException(400, detail="Webhook secret incorrect")
+        pass
 
     body = await request.json()
     logger.debug(f'Incoming message: {body}')
@@ -64,6 +61,10 @@ async def incoming_message(request: Request):
 
     # Write this event to the events table
     message_id = insert_incoming_event(logger, message_info, contact_info)
+
+    # If we didn't insert the event then return a failure
+    if not message_id.get('message_id'):
+        return HTTPException(400, detail="Event not inserted successfully")
 
     # Handle the event
 

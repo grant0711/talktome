@@ -2,14 +2,19 @@ import json
 
 from . import async_postgres
 
+
 def insert_incoming_event(logger, message_info, contact_info):
     """
-    
-    """
-    logger.debug(f"MESSAGE INFO : {message_info}")
-    logger.debug(f"CONTACT INFO : {contact_info}")
+    Inserts incoming message event into postgres
 
-    # Transform our dicts into strings for JSONB insert or set as None
+    Inputs:
+        - logger: logger object
+        - message_info: dict 'messages' key within message post request body
+        - contact_info: dict client info returning from contact insert statement
+    Outputs:
+        - dict with 'message_id' key and value pair if successful, empty list if unsucessful insert
+    """
+    # Transform our dicts into strings for JSONB insert or set as NULL
     text = "'"+json.dumps(message_info.get("text"))+"'" if message_info.get("text") else "NULL"
     image = "'"+json.dumps(message_info.get("image"))+"'" if message_info.get("image") else "NULL"
     audio = "'"+json.dumps(message_info.get("audio"))+"'" if message_info.get("audio") else "NULL"
@@ -21,5 +26,4 @@ def insert_incoming_event(logger, message_info, contact_info):
         RETURNING message_id;
     """
     message_id = async_postgres.execute(logger, 'heroku', sql, commit=True)
-    logger.info(message_id)
-    return message_id
+    return message_id[0]

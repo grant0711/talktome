@@ -42,11 +42,3 @@ def get_or_create_contact(logger, wa_id):
     
     return contact_info
 
-
-def update_contact_info(logger, wa_id, vars):
-    """
-    
-    """
-    # Update the vars column on the contact with something new
-    # Clear the redis cache for this specific contact key
-    pass

@@ -21,6 +21,10 @@ def authenticate_webhook_request(logger, x_hub_signature, payload):
     """
     test_signature = hmac.new(os.environ['WEBHOOK_SECRET'].encode(), payload.decode().encode('unicode-escape'), sha1).hexdigest()
 
+    logger.debug(f'x_hub_signature: {x_hub_signature}')
+    logger.debug(f'test_signature: {test_signature}')
+
+
     if test_signature != x_hub_signature[3:]:
         logger.debug(f'UNAUTHORIZED incoming request: {payload}')
         return False
