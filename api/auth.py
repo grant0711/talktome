@@ -18,7 +18,7 @@ def authenticate_webhook_request(logger, x_hub_signature, payload):
         - This doesn't work, I don't know why
         - The docs mention something about the encoding being 'unicode-escape' but I can't figure this out
     """
-    test_signature = jwt.encode(json.dumps(payload), os.environ['WEBHOOK_SECRET'], 'sha1')
+    test_signature = jwt.encode(payload, os.environ['WEBHOOK_SECRET'], 'sha1')
     #test_signature = hmac.new(os.environ['WEBHOOK_SECRET'].encode(), payload.decode('utf-8').encode('unicode-escape'), sha1).hexdigest()
 
     logger.debug(f'x_hub_signature: {x_hub_signature}')
