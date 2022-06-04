@@ -41,12 +41,13 @@ async def incoming_message(request: Request):
           this is actually the desirable behavior for the moment
     """
     # FIXME we authenticate the incoming webhook request to ensure it's coming from whatsapp
-    body = await request.json()
+    payload = await request.body()
     headers = request.headers
-    if not authenticate_webhook_request(logger, headers.get('x-hub-signature', ''), body):
+    if not authenticate_webhook_request(logger, headers.get('x-hub-signature', ''), payload):
         #return HTTPException(400, detail="Webhook secret incorrect")
         pass
 
+    body = await request.json()
     logger.debug(f'Incoming message: {body}')
 
     changes = body['entry'][0]['changes'][0]['value']
