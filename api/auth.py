@@ -17,16 +17,15 @@ def authenticate_webhook_request(logger, x_hub_signature, payload):
         - This doesn't work, I don't know why
         - The docs mention something about the encoding being 'unicode-escape' but I can't figure this out
     """
-    hashed = hmac.new(os.environ['WEBHOOK_SECRET'].encode(), payload, sha1)
+    hashed = hmac.new(os.environ['WEBHOOK_SECRET'].encode(), payload, 'sha1')
 
     test_signature = hashed.hexdigest()
-    #test_signature = hmac.new(os.environ['WEBHOOK_SECRET'].encode(), payload.decode('utf-8').encode('unicode-escape'), sha1).hexdigest()
 
     logger.debug(f'x_hub_signature: {x_hub_signature}')
     logger.debug(f'test_signature: {test_signature}')
 
 
-    if test_signature != x_hub_signature[3:]:
+    if test_signature != x_hub_signature[4:]:
         logger.debug(f'UNAUTHORIZED incoming request: {payload}')
         return False
 
