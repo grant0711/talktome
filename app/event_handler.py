@@ -1,6 +1,6 @@
 import json
 
-from . import async_postgres
+from . import postgres
 
 
 def insert_incoming_event(logger, message_info, contact_info):
@@ -25,5 +25,5 @@ def insert_incoming_event(logger, message_info, contact_info):
         VALUES ('{message_info["id"]}', '{message_info["timestamp"]}', '{message_info["type"]}', {text}, {image}, {audio}, {document}, 'inbound', FALSE, '{contact_info["wa_id"]}')
         RETURNING message_id;
     """
-    message_id = async_postgres.execute(logger, 'heroku', sql, commit=True)
+    message_id = postgres.execute(logger, 'heroku', sql, commit=True)
     return message_id[0]

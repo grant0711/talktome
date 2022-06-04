@@ -2,7 +2,7 @@
 
 
 """
-from . import async_postgres
+from . import postgres
 
 
 def get_contact_detailed_info(logger, wa_id):
@@ -10,7 +10,7 @@ def get_contact_detailed_info(logger, wa_id):
     
     """
     sql = f"SELECT * FROM whatsapp.contacts WHERE wa_id='{wa_id}';"
-    contact_info = async_postgres.execute(logger, 'heroku', sql)
+    contact_info = postgres.execute(logger, 'heroku', sql)
 
     try:
         return contact_info[0]
@@ -24,7 +24,7 @@ def create_contact(logger, wa_id):
     
     """
     sql = f"INSERT INTO whatsapp.contacts (wa_id) VALUES ('{wa_id}') RETURNING *;"
-    contact_info = async_postgres.execute(logger, 'heroku', sql, commit=True)
+    contact_info = postgres.execute(logger, 'heroku', sql, commit=True)
     return contact_info[0]
 
 

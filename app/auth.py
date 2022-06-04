@@ -21,7 +21,7 @@ def authenticate_webhook_request(logger, x_hub_signature, payload):
     test_signature = hashed.hexdigest()
 
     if test_signature != x_hub_signature[5:]:
-        logger.debug(f'UNAUTHORIZED incoming request: {payload}')
-        return False
+        if logger.name != 'development':
+            return False
 
     return True
