@@ -20,7 +20,7 @@ def authenticate_webhook_request(logger, x_hub_signature, payload):
     """
     hashed = hmac.new(os.environ['WEBHOOK_SECRET'].encode(), payload, sha1)
 
-    test_signature = base64.encodebytes(hashed.digest()).decode('utf-8')
+    test_signature = base64.encodebytes(hashed.hexdigest()).decode('utf-8')
     #test_signature = hmac.new(os.environ['WEBHOOK_SECRET'].encode(), payload.decode('utf-8').encode('unicode-escape'), sha1).hexdigest()
 
     logger.debug(f'x_hub_signature: {x_hub_signature}')
