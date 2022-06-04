@@ -17,11 +17,13 @@ MarkupSafe==2.1.1
 orjson==3.6.8
 psycopg2-binary==2.9.3
 pydantic==1.9.1
+PyJWT==2.4.0
 python-dateutil==2.8.2
 python-dotenv==0.20.0
 python-multipart==0.0.5
 PyYAML==6.0
 requests==2.27.1
+simplejson==3.17.6
 six==1.16.0
 sniffio==1.2.0
 starlette==0.19.1

@@ -1,9 +1,7 @@
 import os
 import json
 
-import hmac
-from hashlib import sha1
-
+import jwt
 
 def authenticate_webhook_request(logger, x_hub_signature, payload):
     """
@@ -20,9 +18,8 @@ def authenticate_webhook_request(logger, x_hub_signature, payload):
         - This doesn't work, I don't know why
         - The docs mention something about the encoding being 'unicode-escape' but I can't figure this out
     """
-    webhook_secret = os.environ['WEBHOOK_SECRET']
-    logger.info(f'webhook_secret: {webhook_secret}')
-    test_signature = hmac.new(os.environ['WEBHOOK_SECRET'].encode(), payload.decode('utf-8').encode('unicode-escape'), sha1).hexdigest()
+    test_signature = jwt.encode(json.dumps(payload), os.environ['WEBHOOK_SECRET'], 'sha1')
+    #test_signature = hmac.new(os.environ['WEBHOOK_SECRET'].encode(), payload.decode('utf-8').encode('unicode-escape'), sha1).hexdigest()
 
     logger.debug(f'x_hub_signature: {x_hub_signature}')
     logger.debug(f'test_signature: {test_signature}')
