@@ -44,8 +44,7 @@ async def incoming_message(request: Request):
     payload = await request.body()
     headers = request.headers
     if not authenticate_webhook_request(logger, headers.get('x-hub-signature', ''), payload):
-        #return HTTPException(400, detail="Webhook secret incorrect")
-        pass
+        return HTTPException(400, detail="Webhook secret incorrect")
 
     body = await request.json()
     logger.debug(f'Incoming message: {body}')
