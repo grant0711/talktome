@@ -1,3 +1,5 @@
+from curses.ascii import HT
+from email.policy import HTTP
 import os
 import logging
 from logging.config import dictConfig
@@ -26,17 +28,20 @@ app = FastAPI()
 async def incoming_message(request: Request):
     """
     Endpoint to receive all inbound messages from whatsapp api
-
-    NOTE:
-        - When using the Starlette Request object directly in FastAPI, the automatic swagger documentation
-          does not function as intended
     """
     if not authenticate_webhook_request(logger, request.headers.get('x-hub-signature', ''), await request.body()):
         return HTTPException(400, detail='NOT AUTHORIZED')
+    
     body = await request.json()
+
     logger.debug(f'INBOUND MESSAGE: {body}')
+    
     message = InboundMessage(logger, body)
-    return vars(message)
+
+    if message.status != 'success':
+        return HTTPException(401, detail='Message processing failed')
+
+    return "OK"
 
 
 @app.get("/webhook")
@@ -46,7 +51,6 @@ async def verify_webhook(request: Request):
 
     Documentation: https://developers.facebook.com/docs/graph-api/webhooks/getting-started
     """
-    logger.debug(f"Incoming webhook verification request")
     try:
         if request.query_params['hub.verify_token'] == os.environ['WEBHOOK_CONFIG_TOKEN']:
             return int(request.query_params['hub.challenge'])

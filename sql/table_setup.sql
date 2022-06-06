@@ -21,9 +21,6 @@ CREATE TABLE whatsapp.conversations (
 DROP TYPE IF EXISTS direction;
 CREATE TYPE direction AS ENUM ('inbound', 'outbound');
 
-DROP TYPE IF EXISTS message_status;
-CREATE TYPE message_status AS ENUM ('pending', 'success', 'failed');
-
 CREATE TABLE whatsapp.messages (
     -- These fields are from the whatsapp message
     id VARCHAR(255) PRIMARY KEY,
@@ -38,7 +35,6 @@ CREATE TABLE whatsapp.messages (
     -- Synthetic fields
     direction direction NOT NULL,
     automated BOOLEAN NOT NULL,
-    status message_status NOT NULL DEFAULT 'pending',
     time_created TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW()
 
     -- Our conversation ID

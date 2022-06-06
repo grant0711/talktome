@@ -1,6 +1,6 @@
 
 class Classifier:
-    def classify(message, logger):
+    def classify(logger, message):
         if message.type == 'text':
             logger.debug('this is a text message')
             return [1]

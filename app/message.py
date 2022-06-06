@@ -1,27 +1,34 @@
-import json
-
 from app.classifier import Classifier
 from app import postgres
+from app.conversation import Conversation
 
 
-def convert(input):
-    if type(input) == int:
-        return str(input)
-    elif type(input) == dict:
-        return "'" + json.dumps(input) + "'"
-    elif type(input) == str:
-        return "'" + input + "'"
-    elif type(input) == bool:
-        return 'TRUE' if input else 'FALSE'
-
-    raise Exception(f'Input datatype : {type(input)} not handled')
 
 def insert_message(logger, message):
-    columns = ', '.join(list(vars(message).keys()))
-    values = ', '.join([convert(x) for x in list(vars(message).values())])
-    sql = f"INSERT INTO whatsapp.messages ({columns}) VALUES ({values}) RETURNING *;"
-    message_info = postgres.execute(logger, sql, commit=True)
-    logger.debug(message_info)
+    """
+    Inserts a message into whatsapp.messages postgres table
+
+    Inputs:
+        - logger: logger object
+        - message: instance of class Message (InboundMessage or OutboundMessage)
+    Outputs:
+        - dict columns as keys, values as values of inserted row
+    """
+    columns = [
+        'id',
+        'sender_phone',
+        'receiver_phone',
+        'route_id',
+        'timestamp',
+        'type',
+        'content',
+        'direction',
+        'automated'
+    ]
+    value_str = ', '.join([postgres.convert_to_str(vars(message).get(x)) for x in columns])
+    column_str = ', '.join(columns)
+    sql = f"INSERT INTO whatsapp.messages ({column_str}) VALUES ({value_str}) RETURNING *;"
+    return postgres.execute(logger, sql, commit=True)
 
 
 
@@ -31,6 +38,7 @@ class InboundMessage:
         field = changes['field']
         value = changes['value']
         
+        # Index fields we need in postgres out of json payload
         self.id = value[field][0]['id']
         self.sender_phone = value['contacts'][0]['wa_id']
         self.receiver_phone = value['metadata']['display_phone_number']
@@ -44,28 +52,25 @@ class InboundMessage:
         self.automated = False
 
         # Link message to conversation
+        self.conversation = Conversation(logger, contact_id=self.sender_phone)
+        self.conversation_id = self.conversation.id
 
-        # Insert our message to postgres
+        # Insert our message to postgres now before classifying and before responding
+        # to the message within our conversation
         insert_message(logger, self)
 
         # Classify the message
-        self.classify(logger)
+        self.classification_array = Classifier.classify(logger, self)
 
-        logger.debug(vars(self))
+        # Add our message to the conversation
+        self.conversation.add_message(self)
 
-
-    def push_to_conversation(self, logger):
-        pass
-
-
-
-    def classify(self, logger):
-        self.classification_array = Classifier.classify(self, logger)
-        logger.debug(self.classification_array)
+        # Run our conversation logic
+        self.conversation.run()
 
 
 class OutboundMessage:
-    def __init__(self, data, logger):
+    def __init__(self, logger, data):
         pass
 
 
