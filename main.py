@@ -1,5 +1,3 @@
-from curses.ascii import HT
-from email.policy import HTTP
 import os
 import logging
 from logging.config import dictConfig
@@ -37,9 +35,6 @@ async def incoming_message(request: Request):
     logger.debug(f'INBOUND MESSAGE: {body}')
     
     message = InboundMessage(logger, body)
-
-    if message.status != 'success':
-        return HTTPException(401, detail='Message processing failed')
 
     return "OK"
 

@@ -9,7 +9,7 @@ def get_or_create_conversation(logger, contact_id):
     
     
     """
-    # Check in redis cache if a conversation exists for the current contact_id
+    # FIXME Check in redis cache if a conversation exists for the current contact_id
     # If it does exist, return it
     # If it doesn't exist, instantiate a new Converation isntance and return it
 
@@ -45,8 +45,9 @@ class Conversation:
         return new_conversation['id']
 
 
-    def add_message(self, message):
-        self.messages = self.messages.insert(0, message)
+    def add_message(self, logger, message):
+        self.messages = self.messages + [message]
+        self.run(logger)
 
 
     def run(self, logger):
@@ -58,9 +59,10 @@ class Conversation:
             - bool: True if run produces a successful response to sender, False if an error occurs
         """
         logger.debug('Running the conversation')
-        for message in self.messages:
-            logger.debug(message)
 
+        # Get our last message in self.messages
+        last_message = self.messages[-1]
+
+        # Do something with the message
 
         return True
-        

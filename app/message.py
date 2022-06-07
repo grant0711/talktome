@@ -23,7 +23,8 @@ def insert_message(logger, message):
         'type',
         'content',
         'direction',
-        'automated'
+        'automated',
+        'conversation_id'
     ]
     value_str = ', '.join([postgres.convert_to_str(vars(message).get(x)) for x in columns])
     column_str = ', '.join(columns)
@@ -63,10 +64,7 @@ class InboundMessage:
         self.classification_array = Classifier.classify(logger, self)
 
         # Add our message to the conversation
-        self.conversation.add_message(self)
-
-        # Run our conversation logic
-        self.conversation.run()
+        self.conversation.add_message(logger, self)
 
 
 class OutboundMessage:

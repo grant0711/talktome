@@ -5,6 +5,7 @@ Description:
     Re-usable functions for interaction with Postgres database
 
 Author(s):
+    @myagro-lib version
     @20220604 grant simplified version with removed pandas and sqlalchemy dependencies
 """
 import os
@@ -16,6 +17,12 @@ from psycopg2.extras import RealDictCursor
 
 
 def convert_to_str(input):
+    """
+    FIXME this is a temporary work-around function to convert different python datatypes
+    to the properly formatted string version
+
+    To be replaced with proper psycopg2 datatype handling down the line
+    """
     if type(input) == int:
         return str(input)
     elif type(input) == dict:
@@ -35,10 +42,16 @@ def execute(logger, sql, commit=False):
 
     Inputs:
         - logger: logger object
-        - database: str name of database
         - sql: str sql command to execute
+        - commit: bool set to True to commit after executing query
     Outputs:
-        - list of dict objects for each row of table
+        - dict or list of dict objects for each row of table, keys are column names
+          values are returning values within column for row
+
+    NOTE:
+        - returns dict if only single row returns from query
+        - returns list of dict if multiple rows return from query
+        - returns empty list if no rows returned from query
     """
     with psycopg2.connect(os.environ['DATABASE_URL']) as connection:
         try:

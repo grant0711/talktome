@@ -35,8 +35,8 @@ CREATE TABLE whatsapp.messages (
     -- Synthetic fields
     direction direction NOT NULL,
     automated BOOLEAN NOT NULL,
-    time_created TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW()
+    time_created TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
 
     -- Our conversation ID
-    --conversation_id INT NOT NULL REFERENCES whatsapp.conversations (id)
+    conversation_id INT NOT NULL REFERENCES whatsapp.conversations (id)
 );

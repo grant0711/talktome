@@ -1,5 +1,5 @@
 """
-Copyright (C) 2022 TalkToMe. All Rights Reserved.
+Copyright (C) 2022 myAgro. All Rights Reserved.
 
 Description:
     Utility function to retrieve environmental variables from Heroku app
@@ -12,7 +12,8 @@ NOTE:
     - Generates a temporary token on each subsequent run
 
 Author(s):
-    20220529 @grant original version
+    @bara original version
+    20220529 @grant removed requirement to specify token or app command line arguments
 """
 import logging
 import os
