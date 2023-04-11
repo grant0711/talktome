@@ -1,0 +1,17 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+openai = "*"
+fastapi = {extras = ["all"], version = "*"}
+psycopg2-binary = "*"
+pytest = "*"
+coverage = "*"
+pytest-watch = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.11"
