@@ -1,20 +1,19 @@
-import json
-import datetime
-import random
-import string
+from fastapi.testclient import TestClient
 
-import requests
-
-PRODUCTION_URL = 'https://talk2me-customer-interface-app.herokuapp.com'
-LOCAL_URL = 'http://127.0.0.1:8000'
+from app.src.main import app
 
 
-def test_incoming_text_message(url, body):
-    letters = string.ascii_letters
-    random_message_id = 'wamid.' + ''.join(random.choice(letters) for i in range(50))
-    unix_timestamp = datetime.datetime.utcnow().strftime('%s')
+client = TestClient(app)
 
-    payload = {
+def test_app_up():
+    response = client.get("/")
+    assert response.status_code == 200
+
+
+
+# Example payload coming from whatsapp
+"""
+payload = {
         'object': 'whatsapp_business_account',
         'entry': [{
             'id': '111201064929199',
@@ -43,9 +42,4 @@ def test_incoming_text_message(url, body):
                 'field': 'messages'
         }]}
     ]}
-    response = requests.post(url + '/webhook', json.dumps(payload))
-    print(response.text)
-
-
-if __name__ == "__main__":
-    test_incoming_text_message(LOCAL_URL, 'hello world')
+"""
